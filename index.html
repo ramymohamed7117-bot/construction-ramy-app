@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png"><meta name="theme-color" content="#1e3a8a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نظام إدارة الإنشاءات والتركيبات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;600;700&family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--tx:#1f2937;--mu:#6b7280;--bd:#e5e7eb;--pr:#2563eb;--g1:#1e3a8a;--g2:#06b6d4;--g:linear-gradient(135deg,var(--g1),var(--g2));box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--tx:#e5e7eb;--mu:#94a3b8;--bd:#334155}}
+:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--tx:#e5e7eb;--mu:#94a3b8;--bd:#334155}
+*{box-sizing:border-box;font-family:var(--ff,'Tajawal',Tahoma,sans-serif)}
+html,body{margin:0;background:var(--bg);color:var(--tx)}
+.hide{display:none!important}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--g);padding:16px}
+.box{background:var(--card);border-radius:18px;padding:28px;width:100%;max-width:380px;box-shadow:0 20px 50px #0004}
+.box h1{margin:0 0 4px;text-align:center}.mu{color:var(--mu);font-size:.85rem}
+label{display:block;font-size:.85rem;font-weight:500;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:.95rem}
+button{cursor:pointer;border:0;border-radius:8px;padding:9px 16px;font-weight:700;background:var(--pr);color:#fff}
+button.o{background:transparent;color:var(--tx);border:1px solid var(--bd)}button.r{background:#dc2626}button.s{padding:4px 10px;font-size:.8rem}
+.wide{width:100%;margin-top:16px;padding:11px}
+#app{display:flex;min-height:100vh}
+aside{width:230px;background:var(--g);color:#fff;padding:18px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+aside h2{margin:0 18px 16px;font-size:1.1rem}
+aside a{display:block;padding:11px 18px;color:#fffd;cursor:pointer;border-right:4px solid transparent}
+aside a.on,aside a:hover{background:#fff2;border-right-color:#fbbf24;color:#fff}
+main{flex:1;padding:20px;min-width:0}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.4rem}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.stat b{font-size:1.7rem;display:block}
+.bar{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:.85rem}.bar i{display:block;height:12px;border-radius:6px;min-width:3px}
+.bar span:first-child{width:90px}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--bd);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:560px}th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--bd);font-size:.9rem}th{color:var(--mu);font-size:.78rem}
+.bd{padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:700;display:inline-block}
+.urgent,.expense,.pending{background:#fee2e2;color:#b91c1c}.high{background:#ffedd5;color:#c2410c}.medium,.prog{background:#dbeafe;color:#1d4ed8}.low,.done,.income{background:#dcfce7;color:#15803d}
+.pending{background:#fef3c7;color:#b45309}
+.bar2{display:flex;gap:6px;align-items:flex-end;height:140px}.bar2>div{flex:1;text-align:center;font-size:.7rem}.bar2 .c{display:flex;gap:2px;align-items:flex-end;height:110px;justify-content:center}.bar2 .c i{width:42%;border-radius:4px 4px 0 0}
+.tb{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}.tb select,.tb input{width:auto;min-width:140px}
+#mod{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:14px;z-index:50}
+#mod>div{background:var(--card);border-radius:14px;padding:20px;width:100%;max-width:560px;max-height:90vh;overflow:auto}
+.th{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.th img{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+#toast{position:fixed;left:16px;bottom:20px;background:#16a34a;color:#fff;padding:10px 18px;border-radius:10px;z-index:99}
+#toast.e{background:#dc2626}
+#rep{position:fixed;inset:0;background:#fff;color:#000;z-index:80;overflow:auto;padding:20px;--card:#fff;--tx:#000;--bd:#ccc;--mu:#555}#rep .card{background:#fff}
+@media print{body>*:not(#rep){display:none!important}#rep .np{display:none}#rep{position:static}}
+@media(max-width:800px){#app{flex-direction:column}aside{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:6px}aside h2,#out{display:none}aside a{white-space:nowrap;border-right:0;border-bottom:3px solid transparent;padding:10px 12px}aside a.on{border-bottom-color:#fbbf24}}
+</style>
+</head>
+<body>
+<div id="login"><form class="box" id="lf">
+<h1 id="lt">🏗️ نظام الإنشاءات</h1><p class="mu" style="text-align:center;margin:0 0 8px">تسجيل الدخول إلى لوحة التحكم</p><p id="lc" class="mu hide" style="text-align:center">جارٍ الاتصال بالقاعدة المشتركة…</p>
+<label>اسم المستخدم</label><input id="un" required autocomplete="username">
+<label>كلمة المرور</label><input id="pw" type="password" required autocomplete="current-password">
+<button class="wide">تسجيل الدخول</button>
+<p class="mu" style="text-align:center;margin:14px 0 0">تجريبي: admin/admin (مدير) • user/user (مستخدم)</p>
+</form></div>
+
+<div id="app" class="hide">
+<aside><h2 id="at">🏗️ نظام الإنشاءات</h2><div id="nav" style="display:contents"></div><a id="out" style="margin-top:auto" onclick="logout()">🚪 تسجيل الخروج</a></aside>
+<main><header><div><h1 id="ttl"></h1><div class="mu" id="dt"></div></div><div class="mu" id="who"></div><button class="o s" id="bell" onclick="go('m')" title="طلبات صيانة متأخرة">🔔</button><button class="o s" onclick="tg()" title="الوضع الليلي">🌓</button><button class="o s" onclick="fset()" title="الإعدادات">⚙️</button><button class="o s hide" id="outm" onclick="logout()">خروج</button></header><div id="view"></div></main>
+</div>
+<div id="mod" class="hide" onclick="if(event.target.id=='mod')closeM()"><div id="modc"></div></div>
+<div id="rep" class="hide"></div>
+<div id="toast" class="hide"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST={pending:'قيد الانتظار',prog:'قيد التنفيذ',done:'مكتمل'},PT={construction:'إنشاءات',installation:'تركيبات',renovation:'تجديد',other:'أخرى'},
+PR={urgent:'عاجلة',high:'عالية',medium:'متوسطة',low:'منخفضة'},MT={preventive:'وقائية',corrective:'علاجية',emergency:'طارئة'},CT={call:'اتصال',visit:'زيارة',email:'بريد إلكتروني'};
+let D=null,me=null,tab='dash',Q='';
+try{D=JSON.parse(localStorage.getItem('cms'))}catch(e){}
+D=D||{c:[],p:[],m:[],f:[],a:[],u:[{n:'admin',pw:'admin',r:'admin',d:new Date().toISOString()},{n:'user',pw:'user',r:'user',d:new Date().toISOString()}]};
+let DB=null,SH=false,AS=null,CK={};const KINDS=['c','p','m'];
+const er=e=>toast('تعذر الحفظ في القاعدة: '+(e&&e.message||''),'e');
+const save=()=>{if(SH){sync();return true}try{localStorage.setItem('cms',JSON.stringify(D));return true}catch(e){toast('تعذر الحفظ: المساحة ممتلئة','e');return false}};
+function sync(){KINDS.forEach(k=>{const ids=new Set();D[k].forEach(x=>{ids.add(x.id);const j=JSON.stringify(x);if(CK[k+x.id]!==j){CK[k+x.id]=j;DB.collection(k).doc(x.id).set(JSON.parse(j)).catch(er)}});
+ Object.keys(CK).filter(q=>q[0]==k&&q.length>1&&!ids.has(q.slice(1))).forEach(q=>{delete CK[q];DB.collection(k).doc(q.slice(1)).delete().catch(er)})});
+ const j=JSON.stringify(D.s);if(CK.s!==j){CK.s=j;DB.collection('cfg').doc('s').set(JSON.parse(j)).catch(er)}}
+function listen(){KINDS.forEach(k=>DB.collection(k).onSnapshot(sn=>{D[k]=sn.docs.map(d=>{const o={id:d.id,...d.data()};CK[k+d.id]=JSON.stringify(o);return o}).sort((a,b)=>(a.d||'').localeCompare(b.d||''));if(me)render()},er));
+ DB.collection('cfg').onSnapshot(sn=>{const d=sn.docs.find(x=>x.id=='s');if(d){D.s={...DS,...d.data()};CK.s=JSON.stringify(D.s);applySet()}},er)}
+const DS={name:'نظام الإنشاءات',font:'Tajawal',size:16,pr:'#2563eb',g1:'#1e3a8a',g2:'#06b6d4',dark:'auto'};D.s={...DS,...D.s};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const cn=id=>(D.c.find(x=>x.id==id)||{}).name||'—';
+const adm=()=>me&&me.r=='admin';
+const money=n=>Number(n||0).toLocaleString('ar-EG')+' ج.م';
+const dfmt=d=>d?new Date(d).toLocaleDateString('ar-EG'):'';
+function toast(t,k){const e=$('#toast');e.textContent=t;e.className=k=='e'?'e':'';setTimeout(()=>e.classList.add('hide'),2500)}
+
+$('#lf').onsubmit=e=>{e.preventDefault();const u=D.u.find(x=>x.n==$('#un').value&&x.pw==$('#pw').value);
+ if(!u)return toast('اسم المستخدم أو كلمة المرور غير صحيحة','e');me=u;try{localStorage.setItem('cms_me',u.n)}catch(e){}start()};
+function logout(){me=null;try{localStorage.removeItem('cms_me')}catch(e){}location.reload()}
+const TABS=[['dash','🏠','الرئيسية'],['c','👥','العملاء'],['p','🧱','المشاريع'],['m','🛠️','الصيانة']];
+function start(){$('#login').classList.add('hide');$('#app').classList.remove('hide');$('#outm').classList.remove('hide');
+ $('#who').textContent=me.n+' • '+(adm()?'مدير':'مستخدم');$('#dt').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});go('dash')}
+function go(t){tab=t;Q='';$('#nav').innerHTML=TABS.filter(x=>x[0]!='u'||adm()).map(x=>`<a class="${x[0]==t?'on':''}" onclick="go('${x[0]}')">${x[1]} ${x[2]}</a>`).join('');
+ $('#ttl').textContent=TABS.find(x=>x[0]==t)[2];render()}
+function render(){$('#view').innerHTML=V[tab]();const n=lates().length,b=$('#bell');b.textContent='🔔'+(n?' '+n:'');b.style.color=n?'#dc2626':''}
+const sum=t=>D.f.filter(x=>x.t==t).reduce((s,x)=>s+ +x.amt,0);
+const bd=(c,t)=>`<span class="bd ${c}">${t}</span>`;
+const tbl=(h,r)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.join('')||`<tr><td colspan="${h.length}" class="mu" style="text-align:center">لا توجد بيانات</td></tr>`}</table></div>`;
+const del=(k,id)=>adm()?`<button class="r s" onclick="rm('${k}','${id}')">حذف</button>`:'';
+function rm(k,id){ask('هل أنت متأكد من الحذف؟',()=>{D[k]=D[k].filter(x=>(x.id||x.n)!=id);save();render();toast('تم الحذف')})}
+
+const V={
+dash(){const act=D.p.filter(p=>p.s=='prog').length,dn=D.p.filter(p=>p.s=='done').length,urg=D.m.filter(m=>m.pr=='urgent'&&m.s!='done').length,mx=Math.max(1,...Object.keys(ST).map(k=>D.p.filter(p=>p.s==k).length)),col={pending:'#f59e0b',prog:'#3b82f6',done:'#10b981'};
+ return `${lates().length?`<div class="card" style="border-color:#dc2626;margin-bottom:14px;cursor:pointer" onclick="go('m')">⏰ <b>${lates().length}</b> طلب صيانة متأخر (عاجلة: يوم • عالية: 3 أيام • متوسطة: أسبوع • منخفضة: أسبوعان)</div>`:''}<div class="grid"><div class="card stat"><span class="mu">إجمالي العملاء</span><b>${D.c.length}</b></div><div class="card stat"><span class="mu">مشاريع قيد التنفيذ</span><b>${act}</b></div><div class="card stat"><span class="mu">مشاريع مكتملة</span><b>${dn}</b></div><div class="card stat"><span class="mu">صيانة عاجلة</span><b style="color:#dc2626">${urg}</b></div></div>
+ <div class="card" style="margin-top:14px"><h3 style="margin-top:0">إحصائيات المشاريع</h3>${Object.keys(ST).map(k=>{const n=D.p.filter(p=>p.s==k).length;return `<div class="bar"><span>${ST[k]}</span><i style="width:${n/mx*60}%;background:${col[k]}"></i><span>${n}</span></div>`}).join('')}</div>
+ <h3>آخر طلبات الصيانة</h3>${V.mt(D.m.slice(-5).reverse(),true)}`},
+c(){const l=D.c.filter(x=>(x.name+x.phone+x.code).toLowerCase().includes(Q.toLowerCase()));
+ return `<div class="tb"><input placeholder="🔍 البحث في العملاء..." value="${esc(Q)}" oninput="Q=this.value;render();const i=$('.tb input');i.focus();i.setSelectionRange(Q.length,Q.length)"><button onclick="fc()">+ عميل جديد</button></div>`+
+ tbl(['الكود','الاسم','الهاتف','المشاريع','إجراءات'],l.map(c=>`<tr><td>${esc(c.code)}</td><td><a style="color:var(--pr);cursor:pointer" onclick="prof('${c.id}')">${esc(c.name)}</a></td><td>${esc(c.phone)}</td><td>${D.p.filter(p=>p.c==c.id).length}</td><td><button class="o s" onclick="fc('${c.id}')">تعديل</button> ${del('c',c.id)}</td></tr>`))},
+p(){const fs=window.pf||'all',ft=window.pt||'all';let l=D.p.filter(p=>(fs=='all'||p.s==fs)&&(ft=='all'||p.t==ft));
+ const o=(O,v)=>`<option value="all">الكل</option>`+Object.keys(O).map(k=>`<option value="${k}" ${k==v?'selected':''}>${O[k]}</option>`).join('');
+ return `<div class="tb"><div style="display:flex;gap:8px"><select onchange="pf=this.value;render()">${o(ST,fs)}</select><select onchange="pt=this.value;render()">${o(PT,ft)}</select></div><button onclick="fp()">+ مشروع جديد</button></div>
+ <div class="grid">${l.map(p=>`<div class="card"><div style="display:flex;justify-content:space-between"><b>${esc(p.name)}</b>${bd(p.s,ST[p.s])}</div><div class="mu">${esc(cn(p.c))} • ${PT[p.t]}</div>${p.notes?`<p style="font-size:.85rem">${esc(p.notes)}</p>`:''}${imgs('قبل',p.bi)}${imgs('بعد',p.ai)}<div class="row" style="justify-content:space-between"><span class="mu">${dfmt(p.d)}</span><span><button class="o s" onclick="lg('${p.id}')">📝 السجل${(p.log||[]).length?' ('+p.log.length+')':''}</button> <button class="o s" onclick="rep('p','${p.id}')">🖨️</button> <button class="o s" onclick="fp('${p.id}')">تعديل</button> ${del('p',p.id)}</span></div></div>`).join('')||'<p class="mu">لا توجد مشاريع</p>'}</div>`},
+mt(l,ro){return tbl(['رقم','العميل','النوع','الأولوية','الحالة',ro?'':'إجراءات'],l.map(m=>`<tr><td>#${m.id.slice(-5)}</td><td>${esc(cn(m.c))}</td><td>${MT[m.t]}</td><td>${bd(m.pr,PR[m.pr])}${late(m)?' <span class="bd urgent">⏰ متأخر</span>':''}</td><td>${ro?bd(m.s,ST[m.s]):`<select onchange="ms('${m.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${k==m.s?'selected':''}>${ST[k]}</option>`).join('')}</select>`}</td>${ro?'':`<td><button class="o s" onclick="vm('${m.id}')">عرض</button> ${del('m',m.id)}</td>`}</tr>`))},
+m(){const f=window.mf||'all';return `<div class="tb"><select onchange="mf=this.value;render()"><option value="all">كل الأولويات</option>${Object.keys(PR).map(k=>`<option value="${k}" ${k==f?'selected':''}>${PR[k]}</option>`).join('')}</select><button onclick="fm()">+ طلب صيانة</button></div>`+V.mt(D.m.filter(m=>f=='all'||m.pr==f))},
+};
+const imgs=(l,a)=>a&&a.length?`<div class="mu" style="margin-top:6px">${l}:</div><div class="th">${a.map(s=>`<img src="${s}" onclick="zoom(this.src)">`).join('')}</div>`:'';
+function ms(id,s){D.m.find(m=>m.id==id).s=s;save();toast('تم تحديث الحالة')}
+
+// Modal / forms
+function openM(h){$('#modc').innerHTML=h;$('#mod').classList.remove('hide')}
+function closeM(){$('#mod').classList.add('hide')}
+function zoom(s){openM(`<img src="${s}" style="width:100%;border-radius:10px"><div class="row"><button class="o" onclick="closeM()">إغلاق</button></div>`)}
+const shrink=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.7))};i.onerror=()=>r(null);i.src=fr.result};fr.readAsDataURL(f)});
+const opt=(O,v)=>Object.keys(O).map(k=>`<option value="${k}" ${k==v?'selected':''}>${O[k]}</option>`).join('');
+const copt=v=>`<option value="">اختر العميل</option>`+D.c.map(c=>`<option value="${c.id}" ${c.id==v?'selected':''}>${esc(c.name)}</option>`).join('');
+function form(title,body,onSave){openM(`<h3 style="margin-top:0">${title}</h3><form id="ff2">${body}<div class="row"><button type="button" class="o" onclick="closeM()">إلغاء</button><button>حفظ</button></div></form>`);
+ $('#ff2').onsubmit=async e=>{e.preventDefault();await onSave(e.target);save();closeM();render()}}
+const v=id=>$('#'+id).value, files=async id=>(await Promise.all([...$('#'+id).files].map(async f=>{const u=await shrink(f);return u&&await put(u)}))).filter(Boolean);
+const I=(id,l,t='text',val='',x='')=>`<label>${l}</label><input id="${id}" type="${t}" value="${esc(val)}" ${x}>`;
+
+function fc(id){const c=D.c.find(x=>x.id==id)||{code:'CUST-'+String(D.c.length+1).padStart(4,'0')};
+ form(id?'تعديل عميل':'عميل جديد',I('a','الكود','text',c.code,'readonly')+I('b','الاسم *','text',c.name,'required')+I('c','الهاتف *','tel',c.phone,'required')+I('d','البريد الإلكتروني','email',c.email)+`<label>العنوان</label><textarea id="e" rows="2">${esc(c.address)}</textarea>`+I('g','رابط GPS','url',c.gps,'placeholder="https://maps.google.com/..."'),()=>{
+  const o={code:v('a'),name:v('b'),phone:v('c'),email:v('d'),address:v('e'),gps:v('g')};id?Object.assign(c,o):D.c.push({id:uid(),d:new Date().toISOString(),...o});toast('تم الحفظ')})}
+function prof(id){const c=D.c.find(x=>x.id==id),ps=D.p.filter(p=>p.c==id);c.att=c.att||[];
+ openM(`<h3 style="margin-top:0">ملف العميل: ${esc(c.name)}</h3><p>الكود: ${esc(c.code)}<br>الهاتف: ${esc(c.phone)}<br>البريد: ${esc(c.email||'غير متوفر')}<br>العنوان: ${esc(c.address||'غير متوفر')}<br>${/^https?:/.test(c.gps||'')?`<a href="${esc(c.gps)}" target="_blank" rel="noopener">📍 عرض على الخريطة</a>`:''}</p><h4>المشاريع (${ps.length})</h4>${ps.map(p=>`<div class="card" style="margin-bottom:8px"><b>${esc(p.name)}</b> ${bd(p.s,ST[p.s])}${imgs('قبل',p.bi)}${imgs('بعد',p.ai)}</div>`).join('')||'<p class="mu">لا توجد مشاريع</p>'}
+ <h4>📎 المرفقات (${c.att.length})</h4>${c.att.map((a,i)=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;padding:8px 12px"><span style="overflow:hidden;text-overflow:ellipsis">${a.img?'🖼️':'📄'} ${esc(a.n)} <span class="mu">${Math.round(a.z/1024)} ك.ب</span></span><span style="white-space:nowrap">${a.img?`<button class="o s" onclick="zoom(D.c.find(x=>x.id=='${id}').att[${i}].u)">عرض</button>`:`<a class="bd low" href="${a.u}" download="${esc(a.n)}">تحميل</a>`} <button class="r s" onclick="da('${id}',${i})">حذف</button></span></div>`).join('')||'<p class="mu">لا توجد مرفقات</p>'}
+ <input id="atf" type="file" multiple style="margin-top:8px"><button style="margin-top:8px" onclick="aa('${id}')">رفع المرفقات</button><div class="mu">الصور تُضغط تلقائياً، وباقي الملفات حتى 1.5 ميجا للملف.</div><div class="row"><button class="o" onclick="rep('c','${id}')">🖨️ تقرير العميل</button><button onclick="closeM()">إغلاق</button></div>`)}
+const rd=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(f)});
+async function aa(id){const c=D.c.find(x=>x.id==id),n0=c.att.length;
+ for(const f of $('#atf').files){if(f.type.startsWith('image/')){const u=await shrink(f);if(u)c.att.push({n:f.name,u:await put(u),img:1,z:f.size})}else if(!AS&&f.size>1.5e6)toast('الملف '+f.name+' أكبر من 1.5 ميجا','e');else c.att.push({n:f.name,u:await put(await rd(f)),z:f.size})}
+ if(!save())c.att.length=n0;else if(c.att.length>n0)toast('تم رفع المرفقات');prof(id)}
+function da(id,i){ask('حذف هذا المرفق؟',()=>{D.c.find(x=>x.id==id).att.splice(i,1);save();prof(id)})}
+
+function fp(id){const p=D.p.find(x=>x.id==id)||{t:'construction',s:'pending'};
+ form(id?'تعديل مشروع':'مشروع جديد',`<label>العميل *</label><select id="a" required>${copt(p.c)}</select>`+I('b','اسم المشروع *','text',p.name,'required')+`<label>التصنيف</label><select id="c">${opt(PT,p.t)}</select><label>الحالة</label><select id="d">${opt(ST,p.s)}</select><label>صور قبل التنفيذ</label><input id="e" type="file" multiple accept="image/*"><label>صور بعد التنفيذ</label><input id="g" type="file" multiple accept="image/*"><label>ملاحظات</label><textarea id="h" rows="3">${esc(p.notes)}</textarea>`,async()=>{
+  const bi=await files('e'),ai=await files('g'),o={c:v('a'),name:v('b'),t:v('c'),s:v('d'),notes:v('h')};
+  if(id){if(p.s!=o.s)lgp(p,'تغيّرت الحالة إلى: '+ST[o.s]);Object.assign(p,o);if(bi.length)p.bi=[...(p.bi||[]),...bi];if(ai.length)p.ai=[...(p.ai||[]),...ai]}else{const q={id:uid(),d:new Date().toISOString(),bi,ai,...o};lgp(q,'تم إنشاء المشروع');D.p.push(q)};toast('تم الحفظ')})}
+function fm(){form('طلب صيانة جديد',`<label>العميل *</label><select id="a" required onchange="lp()">${copt()}</select><label>نوع الصيانة</label><select id="b">${opt(MT)}</select><label>الأولوية</label><select id="c">${opt(PR,'low')}</select><label>وصف المشكلة *</label><textarea id="d" rows="3" required></textarea><label>الحالة</label><select id="e">${opt(ST)}</select>`,()=>{
+  D.m.push({id:uid(),c:v('a'),t:v('b'),pr:v('c'),desc:v('d'),s:v('e'),d:new Date().toISOString()});toast('تم تسجيل الطلب')})}
+function lp(){}
+const FONTS=['Tajawal','Cairo','Almarai','Amiri','Noto Kufi Arabic','Tahoma'];
+function ask(msg,fn){openM(`<p>${msg}</p><div class="row"><button class="o" onclick="closeM()">إلغاء</button><button class="r" id="yes">تأكيد</button></div>`);$('#yes').onclick=()=>{closeM();fn()}}
+function vm(id){const m=D.m.find(x=>x.id==id);openM(`<h3 style="margin-top:0">طلب صيانة #${m.id.slice(-5)}</h3><p class="mu">${esc(cn(m.c))} • ${MT[m.t]} • ${PR[m.pr]}</p><p>${esc(m.desc)}</p><div class="row"><button onclick="closeM()">إغلاق</button></div>`)}
+function applySet(){const s=D.s,r=document.documentElement;r.style.setProperty('--pr',s.pr);r.style.setProperty('--g1',s.g1);r.style.setProperty('--g2',s.g2);r.style.setProperty('--ff',`'${s.font}',Tahoma,sans-serif`);r.style.fontSize=s.size+'px';
+ s.dark=='auto'?r.removeAttribute('data-theme'):r.setAttribute('data-theme',s.dark);
+ $('#lt').textContent='🏗️ '+s.name;$('#at').textContent='🏗️ '+s.name;document.title=s.name}
+function up(k,val){D.s[k]=val;applySet();save()}
+function tg(){const dk=D.s.dark=='dark'||(D.s.dark=='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);up('dark',dk?'light':'dark')}
+function fset(){const s=D.s,a=adm();
+ openM(`<h3 style="margin-top:0">⚙️ الإعدادات</h3><label>الوضع</label><select onchange="up('dark',this.value)">${opt({auto:'تلقائي',light:'نهاري',dark:'ليلي'},s.dark)}</select>`+
+ (a?`<h4>المظهر</h4>`+I('sn','اسم التطبيق','text',s.name,`oninput="up('name',this.value)"`)+`<label>نوع الخط</label><select onchange="up('font',this.value)">${FONTS.map(f=>`<option ${f==s.font?'selected':''}>${f}</option>`).join('')}</select><label>حجم الخط: <span id="fz">${s.size}</span></label><input type="range" min="12" max="22" value="${s.size}" oninput="up('size',+this.value);$('#fz').textContent=this.value"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${[['pr','اللون الرئيسي'],['g1','الشريط (من)'],['g2','الشريط (إلى)']].map(x=>`<div><label>${x[1]}</label><input type="color" value="${s[x[0]]}" oninput="up('${x[0]}',this.value)" style="padding:2px;height:38px"></div>`).join('')}</div><button class="o s" style="margin-top:10px" onclick="D.s={...DS};save();applySet();fset()">استعادة الإعدادات الافتراضية</button>`:'')+
+ (SH?'':`<h4>كلمة مروري</h4><div style="display:flex;gap:8px"><input id="np" type="password" placeholder="كلمة مرور جديدة"><button onclick="cp()">تغيير</button></div>`)+(a?ur()+bk():'')+PWA+`<div class="row"><button onclick="closeM()">إغلاق</button></div>`)}
+function cp(){const p=$('#np').value;if(!p)return toast('أدخل كلمة المرور','e');me.pw=p;save();$('#np').value='';toast('تم تغيير كلمة مرورك')}
+function ur(){if(SH)return `<h4>المستخدمون</h4><p class="mu">في الوضع المشترك تُدار الصلاحيات من مشاركة الصفحة: Editor = مدير، Contributor = مستخدم.</p>`;return `<h4>المستخدمون</h4>`+D.u.map((u,i)=>`<div class="card" style="display:flex;gap:6px;align-items:center;margin-bottom:6px;padding:8px 10px;flex-wrap:wrap"><b style="flex:1;min-width:70px">${esc(u.n)}</b><span class="bd ${u.r=='admin'?'medium':'low'}">${u.r=='admin'?'مدير':'مستخدم'}</span><input id="pw${i}" type="password" placeholder="كلمة جديدة" style="width:120px"><button class="s" onclick="sp(${i})">تغيير</button>${u.n!='admin'&&u!==me?`<button class="r s" onclick="du(${i})">حذف</button>`:''}</div>`).join('')+`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input id="nu" placeholder="اسم المستخدم"><input id="npw" type="password" placeholder="كلمة المرور"><select id="nr"><option value="user">مستخدم</option><option value="admin">مدير</option></select><button onclick="au()">+ إضافة مستخدم</button></div>`}
+function sp(i){const x=$('#pw'+i).value;if(!x)return toast('أدخل كلمة المرور','e');D.u[i].pw=x;save();$('#pw'+i).value='';toast('تم تغيير كلمة المرور')}
+function du(i){ask('حذف هذا المستخدم؟',()=>{D.u.splice(i,1);save();fset()})}
+function au(){const n=$('#nu').value.trim(),w=$('#npw').value;if(!n||!w)return toast('أكمل البيانات','e');if(D.u.some(u=>u.n==n))return toast('اسم المستخدم موجود بالفعل','e');D.u.push({n,pw:w,r:$('#nr').value,d:new Date().toISOString()});save();toast('تمت الإضافة');fset()}
+
+const SLA={urgent:1,high:3,medium:7,low:14},late=m=>m.s!='done'&&(Date.now()-new Date(m.d))/864e5>SLA[m.pr],lates=()=>D.m.filter(late);
+const blob=u=>{const [h,b]=u.split(','),m=(h.match(/:(.*?);/)||[])[1]||'',a=atob(b),n=new Uint8Array(a.length);for(let i=0;i<a.length;i++)n[i]=a.charCodeAt(i);return new Blob([n],{type:m})};
+const put=async u=>{if(!AS)return u;try{return (await AS.upload(blob(u))).url}catch(e){return u}};
+const PWA=`<h4>📱 التثبيت على الموبايل</h4><p class="mu">أندرويد (Chrome): القائمة ⋮ ← «إضافة إلى الشاشة الرئيسية». آيفون (Safari): مشاركة ← «إضافة إلى الشاشة الرئيسية».</p>`;
+const bk=()=>`<h4>💾 النسخ الاحتياطي</h4><button onclick="exp()">⬇️ تصدير نسخة</button><label>استيراد من ملف</label><input type="file" accept=".json" onchange="imp(this)">`+(SH?`<button class="o s" style="margin-top:8px" onclick="legacy()">نقل بيانات هذا الجهاز القديمة إلى القاعدة المشتركة</button>`:'');
+async function exp(){const j=JSON.stringify({v:1,c:D.c,p:D.p,m:D.m,s:D.s,u:SH?[]:D.u},null,1);
+ try{const d=await claude.use('downloads');await d.save({filename:'backup-'+new Date().toISOString().slice(0,10)+'.json',data:j});return}catch(e){}
+ openM(`<h3 style="margin-top:0">نسخة احتياطية</h3><p class="mu">انسخ النص واحفظه في ملف .json:</p><textarea rows="10" onfocus="this.select()">${esc(j)}</textarea><div class="row"><button onclick="closeM()">إغلاق</button></div>`)}
+function imp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);ask('سيتم دمج البيانات (الموجود بنفس المعرّف يُستبدل). متابعة؟',()=>mg(o))}catch(e){toast('ملف غير صالح','e')}};r.readAsText(f)}
+function legacy(){try{mg(JSON.parse(localStorage.getItem('cms')))}catch(e){toast('لا توجد بيانات قديمة على هذا الجهاز','e')}}
+function mg(o){KINDS.forEach(k=>(o[k]||[]).forEach(x=>{const i=D[k].findIndex(y=>y.id==x.id);i<0?D[k].push(x):D[k][i]=x}));if(o.s&&adm())D.s={...DS,...o.s};if(!SH)(o.u||[]).forEach(x=>{if(!D.u.some(y=>y.n==x.n))D.u.push(x)});save();applySet();render();toast('تم الاستيراد')}
+function lg(id){const p=D.p.find(x=>x.id==id);p.log=p.log||[];
+ openM(`<h3 style="margin-top:0">📝 سجل: ${esc(p.name)}</h3><div style="max-height:45vh;overflow:auto;border-right:3px solid var(--pr);padding-right:12px">${p.log.slice().reverse().map(l=>`<div style="margin-bottom:10px"><div class="mu">${new Date(l.t).toLocaleString('ar-EG')} • ${esc(l.u)}</div>${esc(l.x)}</div>`).join('')||'<p class="mu">لا توجد تعليقات</p>'}</div><textarea id="lx" rows="2" placeholder="أضف تعليقاً..." style="margin-top:10px"></textarea><div class="row"><button class="o" onclick="closeM()">إغلاق</button><button onclick="al('${id}')">إضافة</button></div>`)}
+function al(id){const x=$('#lx').value.trim();if(!x)return;const p=D.p.find(y=>y.id==id);(p.log=p.log||[]).push({t:new Date().toISOString(),u:me.n,x,k:'n'});save();lg(id);render()}
+const lgp=(p,x)=>(p.log=p.log||[]).push({t:new Date().toISOString(),u:me.n,x,k:'s'});
+function rep(k,id){const pr=k=='p'?D.p.find(x=>x.id==id):null,c=D.c.find(x=>x.id==(pr?pr.c:id))||{},ps=pr?[pr]:D.p.filter(x=>x.c==id);
+ const h=`<h2>${esc(D.s.name)} — تقرير ${pr?'المشروع':'العميل'}</h2><p>${dfmt(new Date())}</p><h3>${esc(c.name)}</h3><p>${esc(c.code)} • ${esc(c.phone)} • ${esc(c.address||'')}</p>`+ps.map(p=>`<h3>${esc(p.name)} — ${ST[p.s]} (${PT[p.t]})</h3><p>${esc(p.notes||'')}</p>${imgs('قبل',p.bi)}${imgs('بعد',p.ai)}${(p.log||[]).length?`<table><tr><th>التاريخ</th><th>المستخدم</th><th>الحدث</th></tr>${p.log.map(l=>`<tr><td>${dfmt(l.t)}</td><td>${esc(l.u)}</td><td>${esc(l.x)}</td></tr>`).join('')}</table>`:''}`).join('')+(pr?'':`<h3>طلبات الصيانة</h3>`+V.mt(D.m.filter(m=>m.c==id),true));
+ $('#rep').innerHTML=`<div class="np row" style="justify-content:flex-start"><button onclick="try{print()}catch(e){toast('الطباعة غير متاحة هنا، احفظ التقرير','e')}">🖨️ طباعة</button><button class="o" onclick="svr()">⬇️ حفظ HTML</button><button class="o" onclick="$('#rep').classList.add('hide')">إغلاق</button></div>`+h;$('#rep').classList.remove('hide');closeM()}
+async function svr(){const e=$('#rep').cloneNode(true);e.querySelector('.np').remove();try{const d=await claude.use('downloads');await d.save({filename:'report.html',data:'<!DOCTYPE html><html lang="ar" dir="rtl"><meta charset="utf-8"><body style="font-family:Tahoma">'+e.innerHTML})}catch(x){toast('الحفظ غير متاح هنا','e')}}
+(async()=>{if(!(window.claude&&claude.use))return;$('#lf').classList.add('hide');$('#lc').classList.remove('hide');let db=null,u=null;
+ try{db=await claude.use('db');u=await claude.use('user');AS=await claude.use('assets')}catch(e){}
+ $('#lc').classList.add('hide');if(!db||!u){$('#lf').classList.remove('hide');return}
+ const v=await u.me();DB=db;SH=true;me={n:v.name||'مستخدم',r:v.canEdit?'admin':'user'};D.c=[];D.p=[];D.m=[];listen();start()})();
+applySet();if(!(window.claude&&claude.use))try{const s=localStorage.getItem('cms_me'),u=D.u.find(x=>x.n==s);if(u){me=u;start()}}catch(e){}
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body>
+</html>
